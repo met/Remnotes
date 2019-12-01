@@ -52,6 +52,13 @@ function frame:OnEvent(event, arg1, ...)
 			RemnotesLog = {};
 			print(msgPrefix.."Log initialized.");
 		end
+
+		local playerName = GetUnitName("player");
+		local nNotes = NS.currentPlayerNotes(RemnotesData, playerName);
+
+		if type(nNotes) == "number" and nNotes > 0 then
+			print(msgPrefix.."There are "..nNotes.." notes for character "..playerName..".");
+		end
 	end
 end
 

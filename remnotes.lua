@@ -119,3 +119,17 @@ function NS.deleteNote(notesDB, charname, index)
 	table.remove(notesDB[charname], index);
 	print("Note "..index.." was deleted");
 end
+
+function NS.currentPlayerNotes(notesDB, charname)
+
+	if notesDB == nil or charname == nil then
+		print(cError.."ERROR: currentPlayerNotes called with nil arguments.");
+		return;
+	end
+
+	if notesDB[charname] == nil then
+		return 0;
+	end
+
+	return #notesDB[charname];
+end
