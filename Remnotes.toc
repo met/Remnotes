@@ -1,1 +1,10 @@
-##
+## Interface: 11302
+## Title: Remnotes
+## Notes: Remindes and notes
+## Author: Martin Hassman
+## Version: 1.0
+## SavedVariables: RemnotesSettings, RemnotesData, RemnotesLog
+
+core.lua
+slashcommands.lua
+remnotes.lua
