@@ -120,7 +120,7 @@ function NS.deleteNote(notesDB, charname, index)
 	print("Note "..index.." was deleted");
 end
 
-function NS.currentPlayerNotes(notesDB, charname)
+function NS.countPlayerNotes(notesDB, charname)
 
 	if notesDB == nil or charname == nil then
 		print(cError.."ERROR: currentPlayerNotes called with nil arguments.");

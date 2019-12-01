@@ -138,11 +138,33 @@ SlashCmdList["REMNOTES_NOTE"] = function(msg)
 	end
 end 
 
+
+-- Usage:
+-- /rem -- print reminders for current character
+-- /rem all -- print reminders for all characters
+-- /rem add me NUMBER type arg -- add new reminder to my note NUMBER, specify type of reminder
+-- /rem del me NUMBER -- delete reminder to my note NUMBER
+-- /rem help
+-- /rem log -- print log of fired reminders for current character
+-- /rem log all -- print log of fired reminders for all characters
 SLASH_REMNOTES_REMINDER1 = "/reminder";
 SLASH_REMNOTES_REMINDER2 = "/rem";
 SlashCmdList["REMNOTES_REMINDER"] = function(msg)
 
-	print("Reminder coomand");
+	local arg1, arg2, arg3, arg4, arg5 = string.match(msg, "%s?(%w*)%s?(%w*)%s?(%w*)%s?(%w*)%s?(.*)");
+
+	-- lower case only 1st arguments, second can contain CHARNAME and others filter text
+	arg1 = string.lower(arg1);
+
+	if arg1 == "help" then
+		print(cYellow.."Usage:");
+		print(cYellow..SLASH_REMNOTES_REMINDER1.." -- print reminders for current character");
+		print(cYellow..SLASH_REMNOTES_REMINDER1.." all -- print reminders for ALL your characters");
+		print(cYellow..SLASH_REMNOTES_REMINDER1.." add me NUMBER type arg");
+
+	end
 	-- TODO
+
+
 
 end

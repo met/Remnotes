@@ -54,15 +54,64 @@ function frame:OnEvent(event, arg1, ...)
 		end
 
 		local playerName = GetUnitName("player");
-		local nNotes = NS.currentPlayerNotes(RemnotesData, playerName);
+		local nNotes = NS.countPlayerNotes(RemnotesData, playerName);
 
 		if type(nNotes) == "number" and nNotes > 0 then
 			print(msgPrefix.."There are "..nNotes.." notes for character "..playerName..".");
 		end
+
+	elseif event =="BANKFRAME_OPENED" then
+		--print("BANKFRAME_OPENED");
+		--print(arg1, ...);
+
+		-- TODO player opened bank window, fire bank reminders here
+
+	elseif event == "CHAT_MSG_SKILL" then
+		-- Msg templates: ERR_SKILL_GAINED_S , ERR_SKILL_UP_SI.
+		-- We look for this: Your skill in Fishing has increased to 131.
+		local skill, skilllevel = string.match(arg1, "Your skill in (.+) has increased to (%d+).");
+		-- we must check it match succeded, because there are another messages for this event as well
+		-- e.g. You have gained the First Aid skill. -- this we ignore here
+		if skill ~= nil and skilllevel ~= nil then
+			-- TODO player gained new skill level, fire reminders for this here
+		end
+
+	elseif event == "MAIL_SHOW" then
+		print("MAIL_SHOW");
+		print(arg1, ...);
+
+		-- TODO player opened mail window, fire mail reminders here
+
+	elseif event == "PLAYER_MONEY" then
+		--print(event, arg1, ...);
+		--print("Money=", GetMoney());
+
+		-- TODO player money amount change, fire money reminders here
+
+	elseif event == "PLAYER_LEVEL_UP" then
+		print("PLAYER_LEVEL_UP");
+		print(arg1, ...); -- arg1 should contain new level number
+
+		-- TODO fire level up reminders
+
+	elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
+
+		-- TODO fire zone reminders here
+		-- ZONE_CHANGED_NEW_AREA should be handled with special care
 	end
 end
 
 
 
 frame:RegisterEvent("ADDON_LOADED");
+frame:RegisterEvent("BANKFRAME_OPENED");
+frame:RegisterEvent("CHAT_MSG_SKILL");
+frame:RegisterEvent("MAIL_SHOW");
+frame:RegisterEvent("PLAYER_MONEY");
+frame:RegisterEvent("PLAYER_LEVEL_UP");
+
+frame:RegisterEvent("ZONE_CHANGED");
+frame:RegisterEvent("ZONE_CHANGED_INDOORS");
+frame:RegisterEvent("ZONE_CHANGED_NEW_AREA");
+
 frame:SetScript("OnEvent", frame.OnEvent);
