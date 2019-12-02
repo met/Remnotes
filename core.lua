@@ -77,8 +77,8 @@ function frame:OnEvent(event, arg1, ...)
 		end
 
 	elseif event == "MAIL_SHOW" then
-		print("MAIL_SHOW");
-		print(arg1, ...);
+		--print("MAIL_SHOW");
+		--print(arg1, ...);
 
 		-- TODO player opened mail window, fire mail reminders here
 
@@ -89,8 +89,8 @@ function frame:OnEvent(event, arg1, ...)
 		-- TODO player money amount change, fire money reminders here
 
 	elseif event == "PLAYER_LEVEL_UP" then
-		print("PLAYER_LEVEL_UP");
-		print(arg1, ...); -- arg1 should contain new level number
+		--print("PLAYER_LEVEL_UP");
+		--print(arg1, ...); -- arg1 should contain new level number
 
 		-- TODO fire level up reminders
 

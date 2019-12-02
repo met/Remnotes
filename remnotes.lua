@@ -78,6 +78,8 @@ function NS.printNotesWithFilter(notesDB, filter)
 	end
 
 	-- TODO
+
+	-- filter: charname, reminders, type of reminders, fired...
 end
 
 function NS.addNote(notesDB, charname, noteText)
@@ -116,8 +118,12 @@ function NS.deleteNote(notesDB, charname, index)
 		return;
 	end
 
+
+	local noteText = notesDB[charname][index].text;
+
 	table.remove(notesDB[charname], index);
-	print("Note "..index.." was deleted");
+	print(cYellow.."Note "..index.." was deleted");
+	print("Note text was: ", noteText);
 end
 
 function NS.countPlayerNotes(notesDB, charname)
