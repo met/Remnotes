@@ -25,6 +25,8 @@ local addonName, NS = ...
 local cYellow = "\124cFFFFFF00";
 local cRed = "\124cFFFF0000";
 local cWhite = "\124cFFFFFFFF";
+local cBlue =  "\124cFF0000FF";
+local cLightBlue = "\124cFFadd8e6";
 
 local msgPrefix = cYellow.."["..addonName.."] "..cWhite;
 
@@ -57,8 +59,15 @@ function frame:OnEvent(event, arg1, ...)
 		local nNotes = NS.countPlayerNotes(RemnotesData, playerName);
 
 		if type(nNotes) == "number" and nNotes > 0 then
-			print(msgPrefix.."There are "..nNotes.." notes for character "..playerName..".");
+			if nNotes == 1 then
+				print(msgPrefix.."There is "..cLightBlue.."1 note"..cWhite.." for "..playerName..".");
+			else		
+				print(msgPrefix.."There are "..cLightBlue..nNotes.." notes"..cWhite.." for "..playerName..".");
+			end
 		end
+
+	elseif event == "PLAYER_ENTERING_WORLD" then
+		-- TODO fire reminders for login
 
 	elseif event =="BANKFRAME_OPENED" then
 		--print("BANKFRAME_OPENED");
@@ -109,6 +118,7 @@ frame:RegisterEvent("CHAT_MSG_SKILL");
 frame:RegisterEvent("MAIL_SHOW");
 frame:RegisterEvent("PLAYER_MONEY");
 frame:RegisterEvent("PLAYER_LEVEL_UP");
+frame:RegisterEvent("PLAYER_ENTERING_WORLD");
 
 frame:RegisterEvent("ZONE_CHANGED");
 frame:RegisterEvent("ZONE_CHANGED_INDOORS");
