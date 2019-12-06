@@ -99,6 +99,7 @@ function frame:OnEvent(event, arg1, ...)
 
 	elseif event == "PLAYER_LEVEL_UP" then
 		-- arg1 has new level number
+		local playerName = GetUnitName("player");
 		NS.fireRemindersLevelUp(RemnotesData, playerName, arg1);
 
 	elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
