@@ -153,8 +153,8 @@ end
 -- /rem add me NUMBER type arg -- add new reminder to my note NUMBER, specify type of reminder
 -- /rem del me NUMBER -- delete reminder to my note NUMBER
 -- /rem help
--- /rem log -- print log of fired reminders for current character
--- /rem log all -- print log of fired reminders for all characters
+-- /rem log -- print log of activated reminders for current character
+-- /rem log all -- print log of activated reminders for all characters
 SLASH_REMNOTES_REMINDER1 = "/reminder";
 SLASH_REMNOTES_REMINDER2 = "/rem";
 SlashCmdList["REMNOTES_REMINDER"] = function(msg)
@@ -192,10 +192,10 @@ SlashCmdList["REMNOTES_REMINDER"] = function(msg)
 		end
 
 
-		if arg2 ~= "" and arg3 ~= "" and tonumber(arg3) ~= nill and arg4 ~= "" and arg5 ~= "" then
+		if arg2 ~= "" and arg3 ~= "" and tonumber(arg3) ~= nill and arg4 ~= "" then
 			arg3 = tonumber(arg3);
 
-			NS.addReminder(RemnotesData, arg2, arg3, arg4, arg5);
+			NS.addReminder(RemnotesData, arg2, arg3, arg4, arg5); --arg5 may be emptystring for some reminders
 		else
 			print(cError.."Do not understand "..cWhite..msg..cYellow.." Try "..SLASH_REMNOTES_REMINDER1.." help");
 		end

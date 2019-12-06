@@ -27,6 +27,31 @@ local cRed = "\124cFFFF0000";
 local cWhite = "\124cFFFFFFFF";
 local cError = cRed;
 
+-- valid types of reminders and their parameters
+-- eg "mail" use no parameter => "nil", "levelup" use number => "number"
+local reminderTypes = {
+	["login"] = "nil",
+	["mail"] = "nil",
+	["bank"] = "nil",
+	["levelup"] = "number",
+	["money"] = "number",
+
+	["cooking"] = "number",
+	["first aid"] = "number",
+	["fishing"] = "number",
+
+	["herbalism"] = "number",
+	["mining"] = "number",
+	["skinning"] = "number",
+
+	["alchemy"] = "number",
+	["blacksmithing"] = "number",
+	["enchanting"] = "number",
+	["engineering"] = "number",	
+	["leatherworking"] = "number",
+	["tailoring"] = "number",
+};
+
 function NS.printCharacterNotes(notesDB, charname)
 
 	if notesDB == nil or charname == nil then
@@ -48,11 +73,11 @@ function NS.printCharacterNotes(notesDB, charname)
 				print(k, "-", v.text);
 			else
 
-				if v.reminder.fired == true then
-					--note has reminer thas was already fired
+				if v.reminder.activated == true then
+					--note has reminer thas was already activated
 					print(cYellow.."*"..k, "-", v.text);
 				else
-					--note has reminder not yet fired
+					--note has reminder not yet activated
 					print("\124cFFE0FFFF".."="..k, "-", v.text);
 				end
 			end
@@ -91,7 +116,7 @@ function NS.printNotesWithFilter(notesDB, filter)
 
 	-- TODO
 
-	-- filter: charname, reminders, type of reminders, fired...
+	-- filter: charname, reminders, type of reminders, activated...
 end
 
 function NS.addNote(notesDB, charname, noteText)
@@ -154,10 +179,11 @@ end
 
 function NS.addReminder(notesDB, charname, index, reminderType, reminderCondition)
 
-	if notesDB == nil or charname == nil or index == nil or reminderType == nil or reminderCondition == nil then
+	if notesDB == nil or charname == nil or index == nil or reminderType == nil then
 		print(cError.."ERROR: addReminder called with nil arguments.");
 		return;
 	end
+	-- reminderCondition can be nil for some reminderType, we check validity reminderCondition later
 
 	if type(index) ~= "number" then
 		print(cError.."ERROR: addReminder called with index not number");
@@ -169,23 +195,37 @@ function NS.addReminder(notesDB, charname, index, reminderType, reminderConditio
 		return;
 	end
 
-	--check validity or reminderType and reminderCondition here
 	reminderType = string.lower(reminderType);
 
-	if reminderType == "levelup" then
-		if tonumber(reminderCondition) ~= nil then
-			reminderCondition = tonumber(reminderCondition);
-		else
-			print(cError.."Level number is not valid.");
-			return;
-		end
-	else
-		print(cError.."Unknown reminder type.");
+	if reminderTypes[reminderType] == nil then
+		print(cError.."Reminder type is not valid.");
 		return;
 	end
 
+	-- validate reminder condition parameter
+	if reminderTypes[reminderType] == "nil" then
+		reminderCondition = ""; -- reminders without conditions, eg mail, bank
+
+	elseif reminderTypes[reminderType] == "number" then
+		if reminderCondition ~= nil and tonumber(reminderCondition) ~= nil then
+			reminderCondition = tonumber(reminderCondition);
+		else
+			print(cError.."Condition must be number.");
+			return;
+		end
+
+	elseif reminderTypes[reminderType] == "string" then
+		if reminderCondition ~= nil and tostring(reminderCondition) ~= nil then
+			reminderCondition = tostring(reminderCondition);
+		else
+			print(cError.."Condition must be string.");
+			return;
+		end		
+	end
+
+
 	if notesDB[charname][index].reminder == nil then
-		notesDB[charname][index].reminder = { type = reminderType, condition = reminderCondition, fired = false};
+		notesDB[charname][index].reminder = { type = reminderType, condition = reminderCondition, activated = false};
 		print("Added reminder.");
 	else
 		print(cError.."There is already reminder on note "..index..". Delete it first.");
@@ -193,55 +233,70 @@ function NS.addReminder(notesDB, charname, index, reminderType, reminderConditio
 
 end
 
-function NS.fireRemindersLevelUp(notesDB, charname, level)
+-- Activite (fire) all reminders that match criteria
+-- the first criterium is reminderType
+-- the second optional is defined in callback function
+-- conditionCallback(note) should return true it there is criteria match 
+function NS.activateMatchedReminders(notesDB, charname, reminderType, conditionCallback)
 
-	if notesDB == nil or charname == nil or level == nil then
-		print(cError.."ERROR: fireRemindersLevelUp called with nil arguments.");
+	if notesDB == nil or charname == nil or reminderType == nil then
+		print(cError.."ERROR: activateMatchedReminders called with nil arguments.");
 		return;
 	end
 
-	if tonumber(level) == nill then
-		print(cError.."ERROR: fireRemindersLevelUp called with invalid level number.");
-		return;
-	end
-
-
+	-- there are no notes
 	if notesDB[charname] == nill then
 		return;
 	end
 
 	for n = 1, #notesDB[charname] do
-		if notesDB[charname][n].reminder ~= nil and notesDB[charname][n].reminder.type == "levelup" then
+		local note = notesDB[charname][n];
 
-			if notesDB[charname][n].reminder.condition ~= nil and tonumber(notesDB[charname][n].reminder.condition) ~= nil and tonumber(notesDB[charname][n].reminder.condition) <= level then
-				NS.reminderFired(charname, notesDB[charname][n]);
+		if note.reminder ~= nil and note.reminder.type ~= nil and note.reminder.condition ~= nil and note.reminder.activated ~= nil and note.reminder.activated == false then
+			-- if there is reminder with same type 
+			if note.reminder.type == reminderType then
+
+				-- if there is conditionCallback defines, then we must check if it match too
+				-- for some reminders (eg. bank, mail) is no conditionCallback necessary
+				-- for other (eg levelup) is obligatory
+				if conditionCallback == nill or conditionCallback(note) then
+					NS.activateReminder(charname, note);
+				end
 			end
 		end
 	end
 
 end
 
-function NS.reminderFired(charname, note)
+function NS.activateReminder(charname, note)
 
-	if note == nil then
-		print(cError.."ERROR: reminderFired called with nil arguments.");
+	if charname == nil or note == nil then
+		print(cError.."ERROR: activateReminder called with nil arguments.");
 		return;
 	end
 
 	if note.reminder ~= nil then
-		note.reminder.fired = true;
-		NS.logFiredReminder(RemnotesLog, charname, note);
+		note.reminder.activated = true;
+		NS.logReminder(RemnotesLog, charname, note);
+		NS.displayActivatedReminder(note);
 	end
+end
 
-	print(cYellow.."======= REMINDER =======");
+function NS.logReminder(log, charname, note)
+	table.insert(log, { date = date(), event = "REMINDER_ACTIVATED", charname = charname, type = note.reminder.type, condition = note.reminder.condition, text = note.text });
+end
+
+function NS.displayActivatedReminder(note)
+
+	print(cYellow.."=== "..cRed.."REMINDER ACTIVATED"..cYellow.." ===");
+
+	if note.reminder ~= nill and note.reminder.type ~= nill then
+		print(cYellow.."=== Type: "..note.reminder.type.." ===");
+	end
 
 	if note.text then 
 		print(note.text);
 	end
 
-	print(cYellow.."======================")
-end
-
-function NS.logFiredReminder(log, charname, note)
-	table.insert(log, { date = date(), event = "REMINDER_FIRED", charname = charname, type = note.reminder.type, condition = note.reminder.condition, text = note.text });
+	print(cYellow.."==============================");
 end

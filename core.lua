@@ -67,40 +67,51 @@ function frame:OnEvent(event, arg1, ...)
 		end
 
 	elseif event == "PLAYER_ENTERING_WORLD" then
-		-- TODO fire reminders for login
+		local playerName = GetUnitName("player");
+		NS.activateMatchedReminders(RemnotesData, playerName, "login");
 
 	elseif event =="BANKFRAME_OPENED" then
-		--print("BANKFRAME_OPENED");
-		--print(arg1, ...);
-
-		-- TODO player opened bank window, fire bank reminders here
+		--player open bank window
+		local playerName = GetUnitName("player");
+		NS.activateMatchedReminders(RemnotesData, playerName, "bank");
 
 	elseif event == "CHAT_MSG_SKILL" then
 		-- Msg templates: ERR_SKILL_GAINED_S , ERR_SKILL_UP_SI.
 		-- We look for this: Your skill in Fishing has increased to 131.
-		local skill, skilllevel = string.match(arg1, "Your skill in (.+) has increased to (%d+).");
+		local skillName, skilllevel = string.match(arg1, "Your skill in (.+) has increased to (%d+).");
+		local playerName = GetUnitName("player");
+
 		-- we must check it match succeded, because there are another messages for this event as well
-		-- e.g. You have gained the First Aid skill. -- this we ignore here
-		if skill ~= nil and skilllevel ~= nil then
-			-- TODO player gained new skill level, fire reminders for this here
+		if skillName ~= nil and skilllevel ~= nil then
+			NS.activateMatchedReminders(RemnotesData, playerName, string.lower(skillName),
+				function(note)
+					return tonumber(note.reminder.condition) <= tonumber(skilllevel);
+				end
+			);
 		end
 
 	elseif event == "MAIL_SHOW" then
-		--print("MAIL_SHOW");
-		--print(arg1, ...);
-
-		-- TODO player opened mail window, fire mail reminders here
+		-- player opened mail box
+		local playerName = GetUnitName("player");
+		NS.activateMatchedReminders(RemnotesData, playerName, "mail");
 
 	elseif event == "PLAYER_MONEY" then
-		--print(event, arg1, ...);
-		--print("Money=", GetMoney());
-
-		-- TODO player money amount change, fire money reminders here
+		-- amount of money changed
+		local playerName = GetUnitName("player");
+		NS.activateMatchedReminders(RemnotesData, playerName, "money",
+			function(note)
+				return tonumber(note.reminder.condition) <= GetMoney();
+			end
+		);		
 
 	elseif event == "PLAYER_LEVEL_UP" then
 		-- arg1 has new level number
 		local playerName = GetUnitName("player");
-		NS.fireRemindersLevelUp(RemnotesData, playerName, arg1);
+		NS.activateMatchedReminders(RemnotesData, playerName, "levelup",
+			function(note)
+				return tonumber(note.reminder.condition) <= tonumber(arg1);
+			end
+		);
 
 	elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
 
