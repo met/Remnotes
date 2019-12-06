@@ -60,9 +60,9 @@ function frame:OnEvent(event, arg1, ...)
 
 		if type(nNotes) == "number" and nNotes > 0 then
 			if nNotes == 1 then
-				print(msgPrefix.."There is "..cLightBlue.."1 note"..cWhite.." for "..playerName..".");
+				print(msgPrefix.."There is "..cLightBlue.."1 note"..cWhite.." for "..playerName..". Write "..cLightBlue..SLASH_REMNOTES_NOTE1..cWhite.." to read it.");
 			else		
-				print(msgPrefix.."There are "..cLightBlue..nNotes.." notes"..cWhite.." for "..playerName..".");
+				print(msgPrefix.."There are "..cLightBlue..nNotes.." notes"..cWhite.." for "..playerName..". Write "..cLightBlue..SLASH_REMNOTES_NOTE1..cWhite.." to read them.");
 			end
 		end
 
@@ -98,10 +98,8 @@ function frame:OnEvent(event, arg1, ...)
 		-- TODO player money amount change, fire money reminders here
 
 	elseif event == "PLAYER_LEVEL_UP" then
-		--print("PLAYER_LEVEL_UP");
-		--print(arg1, ...); -- arg1 should contain new level number
-
-		-- TODO fire level up reminders
+		-- arg1 has new level number
+		NS.fireRemindersLevelUp(RemnotesData, playerName, arg1);
 
 	elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
 

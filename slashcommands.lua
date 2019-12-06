@@ -66,6 +66,12 @@ SlashCmdList["REMNOTES_NOTE"] = function(msg)
 
 	local arg1, arg2, arg3 = string.match(msg, "%s?(%w*)%s?(%w*)%s?(.*)");
 
+	-- in case it for any reason did not match at all 
+	if arg1 == nil then
+		print(cError.."Do not understand "..cWhite..msg..cYellow.." Try "..SLASH_REMNOTES_NOTE1.." help");		
+		return;
+	end
+
 	-- lower case only 1st arguments, 2nd can contain CHARNAME and the 3rd can contain the note text
 	arg1 = string.lower(arg1);
 
@@ -119,7 +125,7 @@ SlashCmdList["REMNOTES_NOTE"] = function(msg)
 	-- /note del WHOM NUMBER
 	elseif arg1 == "del" then
 
-		if arg2 == "me" then
+		if string.lower(arg2) == "me" then
 			arg2 = playerName;
 		end
 
@@ -131,6 +137,8 @@ SlashCmdList["REMNOTES_NOTE"] = function(msg)
 
 		if arg2 ~= "" and arg3 ~= nil and arg3 ~= "" then
 			NS.deleteNote(RemnotesData, arg2, arg3);
+		else
+			print(cError.."Incorrect syntax. Use: "..cYellow..SLASH_REMNOTES_NOTE1.." del CHARNAME NUMBER");			
 		end
 
 	else
@@ -153,14 +161,44 @@ SlashCmdList["REMNOTES_REMINDER"] = function(msg)
 
 	local arg1, arg2, arg3, arg4, arg5 = string.match(msg, "%s?(%w*)%s?(%w*)%s?(%w*)%s?(%w*)%s?(.*)");
 
+	-- in case it for any reason did not match at all 
+	if arg1 == nil then
+		print(cError.."Do not understand "..cWhite..msg..cYellow.." Try "..SLASH_REMNOTES_REMINDER1.." help");		
+		return;
+	end
+
+	print(arg1);
+	print(arg2);
+	print(arg3);
+	print(arg4);
+	print(arg5);
+
+
 	-- lower case only 1st arguments, second can contain CHARNAME and others filter text
 	arg1 = string.lower(arg1);
+
+	local playerName = GetUnitName("player");
 
 	if arg1 == "help" then
 		print(cYellow.."Usage:");
 		print(cYellow..SLASH_REMNOTES_REMINDER1.." -- print reminders for current character");
 		print(cYellow..SLASH_REMNOTES_REMINDER1.." all -- print reminders for ALL your characters");
 		print(cYellow..SLASH_REMNOTES_REMINDER1.." add me NUMBER type arg");
+
+	-- /rem add me NUMBER type arg -- add new reminder to my note NUMBER, specify type of reminder
+	elseif arg1 == "add" then
+		if string.lower(arg2) == "me" then
+			arg2 = playerName;
+		end
+
+
+		if arg2 ~= "" and arg3 ~= "" and tonumber(arg3) ~= nill and arg4 ~= "" and arg5 ~= "" then
+			arg3 = tonumber(arg3);
+
+			NS.addReminder(RemnotesData, arg2, arg3, arg4, arg5);
+		else
+			print(cError.."Do not understand "..cWhite..msg..cYellow.." Try "..SLASH_REMNOTES_REMINDER1.." help");
+		end
 
 	end
 	-- TODO
