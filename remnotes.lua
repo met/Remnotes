@@ -214,14 +214,14 @@ function NS.fireRemindersLevelUp(notesDB, charname, level)
 		if notesDB[charname][n].reminder ~= nil and notesDB[charname][n].reminder.type == "levelup" then
 
 			if notesDB[charname][n].reminder.condition ~= nil and tonumber(notesDB[charname][n].reminder.condition) ~= nil and tonumber(notesDB[charname][n].reminder.condition) <= level then
-				NS.reminderFired(notesDB[charname][n]);
+				NS.reminderFired(charname, notesDB[charname][n]);
 			end
 		end
 	end
 
 end
 
-function NS.reminderFired(note)
+function NS.reminderFired(charname, note)
 
 	if note == nil then
 		print(cError.."ERROR: reminderFired called with nil arguments.");
@@ -230,6 +230,7 @@ function NS.reminderFired(note)
 
 	if note.reminder ~= nil then
 		note.reminder.fired = true;
+		NS.logFiredReminder(RemnotesLog, charname, note);
 	end
 
 	print(cYellow.."======= REMINDER =======");
@@ -239,4 +240,8 @@ function NS.reminderFired(note)
 	end
 
 	print(cYellow.."======================")
+end
+
+function NS.logFiredReminder(log, charname, note)
+	table.insert(log, { date = date(), event = "REMINDER_FIRED", charname = charname, type = note.reminder.type, condition = note.reminder.condition, text = note.text });
 end
