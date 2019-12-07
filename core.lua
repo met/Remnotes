@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 --]]
 
-local addonName, NS = ...
+local addonName, NS = ...;
 
 local cYellow = "\124cFFFFFF00";
 local cRed = "\124cFFFF0000";

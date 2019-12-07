@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 --]]
 
-local addonName, NS = ...
+local addonName, NS = ...;
 
 local cYellow = "\124cFFFFFF00";
 local cRed = "\124cFFFF0000";
@@ -54,10 +54,9 @@ local reminderTypes = {
 
 function NS.printCharacterNotes(notesDB, charname)
 
-	if notesDB == nil or charname == nil then
-		print(cError.."ERROR: printCharacterNotes called with nil arguments");
-		return;
-	end
+	assert(notesDB ~= nil, "printCharacterNotes - notesDB is nil");
+	assert(charname ~= nil, "printCharacterNotes - charname is nil");
+
 
 	if notesDB[charname] == nill then
 		print(cYellow.."No notes for character "..charname..".");
@@ -89,10 +88,7 @@ end
 
 function NS.printAllNotes(notesDB)
 
-	if notesDB == nil then
-		print(cError.."ERROR: printAllNotes called with nil arguments");
-		return;
-	end
+	assert(notesDB ~= nil, "printAllNotes - notesDB is nil");
 
 	print(cYellow.."Notes for all characters:");
 
@@ -109,10 +105,9 @@ end
 
 function NS.printNotesWithFilter(notesDB, filter)
 
-	if notesDB == nil or filter == nil then
-		print(cError.."ERROR: printNotesWithFilter called with nil arguments");
-		return;
-	end
+	assert(notesDB ~= nil, "printNotesWithFilter - notesDB is nil");
+	assert(filter ~= nil, "printNotesWithFilter - filter is nil");
+
 
 	-- TODO
 
@@ -121,10 +116,9 @@ end
 
 function NS.addNote(notesDB, charname, noteText)
 
-	if notesDB == nil or charname == nil or noteText == nil then
-		print(cError.."ERROR: addNote called with nil arguments");
-		return;
-	end
+	assert(notesDB ~= nil, "addNote - notesDB is nil");
+	assert(charname ~= nil, "addNote - charname is nil");
+	assert(noteText ~= nil, "addNote - noteText is nil");
 
 	if notesDB[charname] == nill then
 		notesDB[charname] = {};
@@ -134,71 +128,59 @@ function NS.addNote(notesDB, charname, noteText)
 
 	table.insert(notesDB[charname], note);
 
-	print("Added note to character "..charname..".");
-
+	print(cYellow.."Added note to character "..charname..".");
+	print("Note: "..noteText);
 end
 
 function NS.deleteNote(notesDB, charname, index)
 
-	if notesDB == nil or charname == nil or index == nil then
-		print(cError.."ERROR: deleteNote called with nil arguments");
-		return;
-	end
-
-	if type(index) ~= "number" then
-		print(cError.."ERROR: deleteNote called with index not number");
-		return;
-	end
+	assert(notesDB ~= nil, "deleteNote - notesDB is nil");
+	assert(charname ~= nil, "deleteNote - charname is nil");
+	assert(index ~= nil, "deleteNote - index is nil");
+	assert(type(index) == "number", "deleteNote - index must be number");
 
 	if notesDB[charname] == nill or notesDB[charname][index] == nill then
-		print("There is no note "..index..".");
+		print("There is no note "..index.." for "..charname..".");
 		return;
 	end
-
 
 	local noteText = notesDB[charname][index].text;
 
 	table.remove(notesDB[charname], index);
-	print(cYellow.."Note "..index.." was deleted");
-	print("Note text was: ", noteText);
+	print(cYellow.."Note "..index.." was deleted.");
+	print("Note was: ", noteText);
 end
 
 function NS.countPlayerNotes(notesDB, charname)
 
-	if notesDB == nil or charname == nil then
-		print(cError.."ERROR: currentPlayerNotes called with nil arguments.");
-		return;
-	end
+	assert(notesDB ~= nil, "countPlayerNotes - notesDB is nil");
+	assert(charname ~= nil, "countPlayerNotes - charname is nil");
 
 	if notesDB[charname] == nil then
 		return 0;
+	else
+		return #notesDB[charname];
 	end
-
-	return #notesDB[charname];
 end
 
 function NS.addReminder(notesDB, charname, index, reminderType, reminderCondition)
 
-	if notesDB == nil or charname == nil or index == nil or reminderType == nil then
-		print(cError.."ERROR: addReminder called with nil arguments.");
-		return;
-	end
-	-- reminderCondition can be nil for some reminderType, we check validity reminderCondition later
-
-	if type(index) ~= "number" then
-		print(cError.."ERROR: addReminder called with index not number");
-		return;
-	end
+	assert(notesDB ~= nil, "addReminder - notesDB is nil");
+	assert(charname ~= nil, "addReminder - charname is nil");
+	assert(index ~= nil, "addReminder - index is nil");
+	assert(type(index) == "number", "addReminder - index must be number");
+	assert(reminderType ~= nil, "addReminder - reminderType is nil");	
+	-- reminderCondition could be nil for some reminderType, so we check validity of reminderCondition later
 
 	if notesDB[charname] == nill or notesDB[charname][index] == nill then
-		print("There is no note "..index..".");
+		print("There is no note "..index.." for "..charname..".");
 		return;
 	end
 
 	reminderType = string.lower(reminderType);
 
 	if reminderTypes[reminderType] == nil then
-		print(cError.."Reminder type is not valid.");
+		print(cError.."Reminder type "..reminderType.." is not valid.");
 		return;
 	end
 
@@ -239,10 +221,9 @@ end
 -- conditionCallback(note) should return true it there is criteria match 
 function NS.activateMatchedReminders(notesDB, charname, reminderType, conditionCallback)
 
-	if notesDB == nil or charname == nil or reminderType == nil then
-		print(cError.."ERROR: activateMatchedReminders called with nil arguments.");
-		return;
-	end
+	assert(notesDB ~= nill, "activateMatchedReminders - notesDB is nil");
+	assert(charname ~= nill, "activateMatchedReminders - charname is nil");
+	assert(reminderType ~= nill, "activateMatchedReminders - reminderType is nil");	
 
 	-- there are no notes
 	if notesDB[charname] == nill then
@@ -270,10 +251,8 @@ end
 
 function NS.activateReminder(charname, note)
 
-	if charname == nil or note == nil then
-		print(cError.."ERROR: activateReminder called with nil arguments.");
-		return;
-	end
+	assert(charname ~= nil, "activateReminder - charname is nil");
+	assert(note ~= nil, "activateReminder - note is nil");
 
 	if note.reminder ~= nil then
 		note.reminder.activated = true;
@@ -283,10 +262,17 @@ function NS.activateReminder(charname, note)
 end
 
 function NS.logReminder(log, charname, note)
+
+	assert(log ~= nil, "logReminder - log is nil");
+	assert(charname ~= nil, "logReminder - charname is nil");
+	assert(note ~= nil, "logReminder - note is nil");
+
 	table.insert(log, { date = date(), event = "REMINDER_ACTIVATED", charname = charname, type = note.reminder.type, condition = note.reminder.condition, text = note.text });
 end
 
 function NS.displayActivatedReminder(note)
+
+	assert(note ~= nil, "displayActivatedReminder - note is nil");
 
 	print(cYellow.."=== "..cRed.."REMINDER ACTIVATED"..cYellow.." ===");
 

@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 --]]
 
-local addonName, NS = ...
+local addonName, NS = ...;
 
 local cYellow = "\124cFFFFFF00";
 local cRed = "\124cFFFF0000";
@@ -62,6 +62,7 @@ SLASH_REMNOTES_NOTE2 = "/nt";
 -- /nt del CHARNAME NUMBER
 -- /nt del me all
 
+-- /nt tests - run tests
 SlashCmdList["REMNOTES_NOTE"] = function(msg)
 
 	local arg1, arg2, arg3 = string.match(msg, "%s?(%w*)%s?(%w*)%s?(.*)");
@@ -81,7 +82,10 @@ SlashCmdList["REMNOTES_NOTE"] = function(msg)
 
 	local playerName = GetUnitName("player");
 
-	if arg1 == "help" then
+	if arg1 == "tests" then
+		-- TODO run tests here
+
+	elseif arg1 == "help" then
 		print(cYellow.."Usage:");
 		print(cYellow..SLASH_REMNOTES_NOTE1.." -- print notes for current character.");
 		print(cYellow..SLASH_REMNOTES_NOTE1.." all -- print notes for ALL your characters.");
@@ -179,7 +183,10 @@ SlashCmdList["REMNOTES_REMINDER"] = function(msg)
 
 	local playerName = GetUnitName("player");
 
-	if arg1 == "help" then
+	if arg1 == "tests" then
+		--TODO run tests here
+
+	elseif arg1 == "help" then
 		print(cYellow.."Usage:");
 		print(cYellow..SLASH_REMNOTES_REMINDER1.." -- print reminders for current character");
 		print(cYellow..SLASH_REMNOTES_REMINDER1.." all -- print reminders for ALL your characters");
