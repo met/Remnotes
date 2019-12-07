@@ -256,18 +256,19 @@ function NS.activateReminder(charname, note)
 
 	if note.reminder ~= nil then
 		note.reminder.activated = true;
-		NS.logReminder(RemnotesLog, charname, note);
+		NS.logReminder(RemnotesLog, date(), charname, note);
 		NS.displayActivatedReminder(note);
 	end
 end
 
-function NS.logReminder(log, charname, note)
+function NS.logReminder(log, date, charname, note)
 
 	assert(log ~= nil, "logReminder - log is nil");
+	assert(date ~= nil, "logReminder - date is nil");
 	assert(charname ~= nil, "logReminder - charname is nil");
 	assert(note ~= nil, "logReminder - note is nil");
 
-	table.insert(log, { date = date(), event = "REMINDER_ACTIVATED", charname = charname, type = note.reminder.type, condition = note.reminder.condition, text = note.text });
+	table.insert(log, { date = date, event = "REMINDER_ACTIVATED", charname = charname, type = note.reminder.type, condition = note.reminder.condition, text = note.text });
 end
 
 function NS.displayActivatedReminder(note)

@@ -4,7 +4,9 @@
 ## Author: Martin Hassman
 ## Version: 1.0
 ## SavedVariables: RemnotesSettings, RemnotesData, RemnotesLog
+## OptionalDeps: WoWUnit
 
 core.lua
 slashcommands.lua
 remnotes.lua
+tests.lua
