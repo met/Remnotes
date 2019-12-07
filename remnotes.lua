@@ -237,11 +237,16 @@ function NS.activateMatchedReminders(notesDB, charname, reminderType, conditionC
 			-- if there is reminder with same type 
 			if note.reminder.type == reminderType then
 
-				-- if there is conditionCallback defines, then we must check if it match too
+				-- if there is conditionCallback defined, then we must check if it match too
 				-- for some reminders (eg. bank, mail) is no conditionCallback necessary
 				-- for other (eg levelup) is obligatory
 				if conditionCallback == nill or conditionCallback(note) then
-					NS.activateReminder(charname, note);
+
+					if NS.activateReminder(note) then
+						NS.displayActivatedReminder(note);
+						NS.logReminder(RemnotesLog, date(), charname, note);
+					end
+					
 				end
 			end
 		end
@@ -249,16 +254,16 @@ function NS.activateMatchedReminders(notesDB, charname, reminderType, conditionC
 
 end
 
-function NS.activateReminder(charname, note)
+function NS.activateReminder(note)
 
-	assert(charname ~= nil, "activateReminder - charname is nil");
 	assert(note ~= nil, "activateReminder - note is nil");
 
 	if note.reminder ~= nil then
 		note.reminder.activated = true;
-		NS.logReminder(RemnotesLog, date(), charname, note);
-		NS.displayActivatedReminder(note);
+		return true;
 	end
+
+	return false;
 end
 
 function NS.logReminder(log, date, charname, note)

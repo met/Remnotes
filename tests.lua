@@ -37,14 +37,124 @@ remnotes.tests = {
 	["basic"] = {
 		["logging"] = function()
 			local log = {};
-			local charname = "Totenhot";
-			local date = "Sat Dec  7 03:06:28 2019";
 			local note = { text = "Some note text.", reminder = { type = "mail", condition = "", activated = false } };
-			local expected = { event = "REMINDER_ACTIVATED", date = date, charname = "Totenhot", type = "mail", text = "Some note text.", condition = "" }
+			NS.logReminder(log, "Sat Dec  7 03:06:28 2019", "Totenhot", note);
 
-			NS.logReminder(log, date, charname, note);
+			local expected = { event = "REMINDER_ACTIVATED", date = "Sat Dec  7 03:06:28 2019", charname = "Totenhot", type = "mail", text = "Some note text.", condition = "" }
 
-			wowUnit:assertSame(log[1], expected, "Event is logged correctly");
+			wowUnit:assertSame(log[1], expected, "Event is logged correctly.");
+		end,
+
+		["notes"] = function()
+			local db = {};
+
+			wowUnit:assertEquals(NS.countPlayerNotes(db, "Luajito"), 0, "Zero notes.");
+
+			NS.addNote(db, "Luajito",  "Some dummy text.");
+			wowUnit:assertSame(
+				db,
+				{
+					["Luajito"] = { {text =  "Some dummy text."} }
+				},
+				"New note added.");
+			wowUnit:assertEquals(NS.countPlayerNotes(db, "Luajito"), 1, "We have one note.");
+
+			NS.addNote(db, "Luajito", "Another note text.");
+			wowUnit:assertSame(
+				db,
+				{
+					["Luajito"] = { {text = "Some dummy text."}, {text = "Another note text."} }
+				},
+				"Another note added.");
+			wowUnit:assertEquals(NS.countPlayerNotes(db, "Luajito"), 2, "We have two notes.");
+			wowUnit:assertEquals(NS.countPlayerNotes(db, "Mojito"), 0, "Mojito has zero notes.");
+
+			NS.addNote(db, "Mojito", "This is Mojito note.");
+			wowUnit:assertSame(
+				db,
+				{
+					["Luajito"] = { {text = "Some dummy text."}, {text = "Another note text."} },
+					["Mojito"]  = { {text = "This is Mojito note."} }
+				},
+				"Another user note added.");
+			wowUnit:assertEquals(NS.countPlayerNotes(db, "Luajito"), 2, "Luajito has still two notes.");
+			wowUnit:assertEquals(NS.countPlayerNotes(db, "Mojito"), 1, "Mojito has one note.");
+
+			NS.deleteNote(db, "Luajito", 1);
+			wowUnit:assertSame(
+				db,
+				{
+					["Luajito"] = { {text = "Another note text."} },
+					["Mojito"]  = { {text = "This is Mojito note."} }
+				},
+				"Delete note.");
+			wowUnit:assertEquals(NS.countPlayerNotes(db, "Luajito"), 1, "Luajito has only one note.");
+			wowUnit:assertEquals(NS.countPlayerNotes(db, "Mojito"), 1, "Mojito has still one note.");
+		end,
+
+		["reminders"] = function ()
+			local db = {};
+
+			NS.addNote(db, "Luajito",  "Some dummy text.");
+			NS.addNote(db, "Luajito",  "Another dummy text.");
+			wowUnit:assertSame(
+				db,
+				{
+					["Luajito"] = {
+						{text = "Some dummy text."},
+						{text = "Another dummy text."}
+					}
+				},
+				"Start with 2 notes.");
+
+			NS.addReminder(db, "Luajito", 1, "mail");
+			wowUnit:assertSame(
+				db,
+				{
+					["Luajito"] = {
+						{
+							text = "Some dummy text.",
+							reminder = { type = "mail", condition = "", activated = false}
+						},
+						{text = "Another dummy text."}
+					}
+				},
+				"Add mail reminder.");
+
+			NS.addReminder(db, "Luajito", 2, "cooking", 150);
+			wowUnit:assertSame(
+				db,
+				{
+					["Luajito"] = {
+						{
+							text = "Some dummy text.",
+							reminder = { type = "mail", condition = "", activated = false}
+						},
+						{
+							text = "Another dummy text.",
+							reminder = { type = "cooking", condition = 150, activated = false}
+						}
+					}
+				},
+				"Add cooking reminder.");
+
+			NS.activateReminder(db["Luajito"][1]);
+			wowUnit:assertSame(
+				db,
+				{
+					["Luajito"] = {
+						{
+							text = "Some dummy text.",
+							reminder = { type = "mail", condition = "", activated = true}
+						},
+						{
+							text = "Another dummy text.",
+							reminder = { type = "cooking", condition = 150, activated = false}
+						}
+					}
+				},
+				"Reminder activated.");
+
 		end
 	}
 }
