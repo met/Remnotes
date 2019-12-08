@@ -27,28 +27,41 @@ local cRed = "\124cFFFF0000";
 local cWhite = "\124cFFFFFFFF";
 local cError = cRed;
 
+-- some custom colors
+local cBlue1 = "\124cFF6896FF";
+local cRed1 = "\124cFFFF564F";
+local cYellow1 = "\124cFFFFE685";
+local cGreen1 = "\124cFF38FFBE";
+local cGray1 = "\124cFFABABAB";
+
+-- Usage:
+-- /remnotes
+-- /remnotes help
+-- /remnotes status
 SLASH_REMNOTES1 = "/remnotes";
 SLASH_REMNOTES2 = "/remno";
 SlashCmdList["REMNOTES"] = function(msg)
 	msg = string.lower(msg);
 
 	if msg == "" or msg == "help" then
-			print(cYellow..addonName.." addon v"..GetAddOnMetadata(addonName, "version")..".");
+			print(cYellow.."Welcome to "..addonName.." addon v"..GetAddOnMetadata(addonName, "version")..".");
 			print(cYellow.."List of commands: ");
 			print(" -", SLASH_REMNOTES1, SLASH_REMNOTES2);
 			print(" -", SLASH_REMNOTES_NOTE1, SLASH_REMNOTES_NOTE2);
 			print(" -", SLASH_REMNOTES_REMINDER1, SLASH_REMNOTES_REMINDER2);
-			print("For more details use these commands with parameter help, e.g.: "..SLASH_REMNOTES_NOTE1.." help");
-			print(cYellow.."General usage:");
-			print(SLASH_REMNOTES_NOTE1.." add me Some notes -- add some note to your character");
-			print(SLASH_REMNOTES_NOTE1.." -- print all notes of your character");
-			print(SLASH_REMNOTES_NOTE1.." all -- print all notes for all your characters");
+			print("For more details use them with parameter help, e.g.: "..SLASH_REMNOTES_NOTE1.." help");
+			print(cYellow.."Some general usage:");
+			print(cYellow..SLASH_REMNOTES_NOTE1.." add me Some notes "..cWhite.."-- add some note to your character");
+			print(cYellow..SLASH_REMNOTES_NOTE1..cWhite.." -- print all notes of your character");
+			print(cYellow..SLASH_REMNOTES_NOTE1.." all "..cWhite.."-- print all notes for all your characters");
+			print(cYellow..SLASH_REMNOTES_REMINDER2.." add me 1 fishing 80 "..cWhite.."-- add reminder to note 2 that fire when player reach fishing level 80");
+
+	elseif msg == "status" then
+		local playerName = GetUnitName("player");
+		NS.printPlayerStatus(RemnotesData, playerName);
 	end
 end
 
-
-SLASH_REMNOTES_NOTE1 = "/note";
-SLASH_REMNOTES_NOTE2 = "/nt";
 
 -- Usage:
 -- /nt list
@@ -61,8 +74,8 @@ SLASH_REMNOTES_NOTE2 = "/nt";
 -- /nt del me NUMBER
 -- /nt del CHARNAME NUMBER
 -- /nt del me all
-
--- /nt tests - run tests
+SLASH_REMNOTES_NOTE1 = "/note";
+SLASH_REMNOTES_NOTE2 = "/nt";
 SlashCmdList["REMNOTES_NOTE"] = function(msg)
 
 	local arg1, arg2, arg3 = string.match(msg, "%s?(%w*)%s?(%w*)%s?(.*)");
@@ -82,10 +95,7 @@ SlashCmdList["REMNOTES_NOTE"] = function(msg)
 
 	local playerName = GetUnitName("player");
 
-	if arg1 == "tests" then
-		-- TODO run tests here
-
-	elseif arg1 == "help" then
+	if arg1 == "help" then
 		print(cYellow.."Usage:");
 		print(cYellow..SLASH_REMNOTES_NOTE1.." -- print notes for current character.");
 		print(cYellow..SLASH_REMNOTES_NOTE1.." all -- print notes for ALL your characters.");
@@ -183,10 +193,7 @@ SlashCmdList["REMNOTES_REMINDER"] = function(msg)
 
 	local playerName = GetUnitName("player");
 
-	if arg1 == "tests" then
-		--TODO run tests here
-
-	elseif arg1 == "help" then
+	if arg1 == "help" then
 		print(cYellow.."Usage:");
 		print(cYellow..SLASH_REMNOTES_REMINDER1.." -- print reminders for current character");
 		print(cYellow..SLASH_REMNOTES_REMINDER1.." all -- print reminders for ALL your characters");

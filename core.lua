@@ -27,6 +27,7 @@ local cRed = "\124cFFFF0000";
 local cWhite = "\124cFFFFFFFF";
 local cBlue =  "\124cFF0000FF";
 local cLightBlue = "\124cFFadd8e6";
+local cError = cRed;
 
 local msgPrefix = cYellow.."["..addonName.."] "..cWhite;
 
@@ -37,8 +38,7 @@ function frame:OnEvent(event, arg1, ...)
 
 	if event == "ADDON_LOADED" and arg1 == addonName then
 
-		print(msgPrefix.."version "..GetAddOnMetadata(addonName, "version"));
-		print(msgPrefix.."Use /remnotes for help");
+		print(msgPrefix.."version "..GetAddOnMetadata(addonName, "version")..". Use /remnotes for help.");
 
 		if RemnotesSettings == nil then
 			RemnotesSettings = {};
@@ -56,15 +56,8 @@ function frame:OnEvent(event, arg1, ...)
 		end
 
 		local playerName = GetUnitName("player");
-		local nNotes = NS.countPlayerNotes(RemnotesData, playerName);
+		NS.printPlayerStatus(RemnotesData, playerName);
 
-		if type(nNotes) == "number" and nNotes > 0 then
-			if nNotes == 1 then
-				print(msgPrefix.."There is "..cLightBlue.."1 note"..cWhite.." for "..playerName..". Write "..cLightBlue..SLASH_REMNOTES_NOTE1..cWhite.." to read it.");
-			else		
-				print(msgPrefix.."There are "..cLightBlue..nNotes.." notes"..cWhite.." for "..playerName..". Write "..cLightBlue..SLASH_REMNOTES_NOTE1..cWhite.." to read them.");
-			end
-		end
 
 	elseif event == "PLAYER_ENTERING_WORLD" then
 		local playerName = GetUnitName("player");
@@ -83,7 +76,16 @@ function frame:OnEvent(event, arg1, ...)
 
 		-- we must check it match succeded, because there are another messages for this event as well
 		if skillName ~= nil and skilllevel ~= nil then
-			NS.activateMatchedReminders(RemnotesData, playerName, string.lower(skillName),
+
+			skillName = string.lower(skillName);
+
+			-- hack, name with two words makes commands parsing more complicated
+			-- for easier procesing need every profession name consist of one word only
+			if skillName == "first aid" then
+				skillName = "firstaid";
+			end
+
+			NS.activateMatchedReminders(RemnotesData, playerName, skillName,
 				function(note)
 					return tonumber(note.reminder.condition) <= tonumber(skilllevel);
 				end
@@ -119,7 +121,6 @@ function frame:OnEvent(event, arg1, ...)
 		-- ZONE_CHANGED_NEW_AREA should be handled with special care
 	end
 end
-
 
 
 frame:RegisterEvent("ADDON_LOADED");
