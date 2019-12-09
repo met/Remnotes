@@ -296,8 +296,8 @@ function NS.activateMatchedReminders(notesDB, charname, reminderType, conditionC
 					if NS.activateReminder(note) then
 						NS.displayActivatedReminder(note);
 						NS.logReminder(RemnotesLog, date(), charname, note);
-					end
-					
+						PlaySound(846); -- IG_QUEST_LOG_ABANDON_QUEST, could find something better, more alertish
+					end					
 				end
 			end
 		end
