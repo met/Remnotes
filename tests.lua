@@ -90,6 +90,21 @@ remnotes.tests = {
 				"Delete note.");
 			wowUnit:assertEquals(NS.countPlayerNotes(db, "Luajito"), 1, "Luajito has only one note.");
 			wowUnit:assertEquals(NS.countPlayerNotes(db, "Mojito"), 1, "Mojito has still one note.");
+
+			NS.addNote(db, "Mojito", "This is Mojito note.");
+			wowUnit:assertEquals(NS.countPlayerNotes(db, "Mojito"), 2, "Mojito has now two notes.");
+
+			NS.deleteAllNotes(db, "Mojito");
+			wowUnit:assertSame(
+				db,
+				{
+					["Luajito"] = { {text = "Another note text."} },
+					["Mojito"]  = { }
+				},
+				"Delete note.");
+			wowUnit:assertEquals(NS.countPlayerNotes(db, "Luajito"), 1, "Luajito has stil only one note.");
+			wowUnit:assertEquals(NS.countPlayerNotes(db, "Mojito"), 0, "Mojito has now zero notes.");
+
 		end,
 
 		["reminders"] = function ()
