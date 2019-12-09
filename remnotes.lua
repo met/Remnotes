@@ -195,6 +195,21 @@ function NS.deleteNote(notesDB, charname, index)
 	print("Note was: ", noteText);
 end
 
+-- Delete all notes for given character
+function NS.deleteAllNotes(notesDB, charname)
+	assert(notesDB ~= nil, "deleteAllNotes - notesDB is nil");
+	assert(charname ~= nil, "deleteAllNotes - charname is nil");
+
+	if notesDB[charname] == nill then
+		print("There are no notes for "..charname..".");
+		return;
+	end
+
+	for i = #notesDB[charname],1,-1 do
+		NS.deleteNote(notesDB, charname, i);
+	end
+end
+
 function NS.countPlayerNotes(notesDB, charname)
 
 	assert(notesDB ~= nil, "countPlayerNotes - notesDB is nil");

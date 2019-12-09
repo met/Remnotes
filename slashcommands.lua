@@ -107,7 +107,8 @@ SlashCmdList["REMNOTES_NOTE"] = function(msg)
 		print(cYellow..SLASH_REMNOTES_NOTE1.." add me Some text... -- add new note to current character.");		
 		print(cYellow..SLASH_REMNOTES_NOTE1.." add CHARNAME Some text... -- add new note to CHARNAME.");		
 
-		print(cYellow..SLASH_REMNOTES_NOTE1.." del me NUMBER -- delete note NUMBER of current character.");		
+		print(cYellow..SLASH_REMNOTES_NOTE1.." del me NUMBER -- delete note NUMBER of current character.");	
+		print(cYellow..SLASH_REMNOTES_NOTE1.." del me all -- delete all notes of current character.");		
 		print(cYellow..SLASH_REMNOTES_NOTE1.." del CHARNAME NUMBER -- delete note NUMBER of CHARNAME.");
 
 	-- /note or /note all /note list or /note list FILTER 
@@ -137,6 +138,7 @@ SlashCmdList["REMNOTES_NOTE"] = function(msg)
 		end
 
 	-- /note del WHOM NUMBER
+	-- /note del WHOM all
 	elseif arg1 == "del" then
 
 		if string.lower(arg2) == "me" then
@@ -147,14 +149,17 @@ SlashCmdList["REMNOTES_NOTE"] = function(msg)
 			print(cError.."Incorrect syntax. Use: "..cYellow..SLASH_REMNOTES_NOTE1.." del CHARNAME NUMBER");
 		end
 
-		arg3 = tonumber(arg3); -- return nil if arg3 is not number
-
-		if arg2 ~= "" and arg3 ~= nil and arg3 ~= "" then
-			NS.deleteNote(RemnotesData, arg2, arg3);
+		if string.lower(arg3) == "all" and arg2 ~= nil then
+			NS.deleteAllNotes(RemnotesData, arg2);
 		else
-			print(cError.."Incorrect syntax. Use: "..cYellow..SLASH_REMNOTES_NOTE1.." del CHARNAME NUMBER");			
-		end
+			arg3 = tonumber(arg3); -- return nil if arg3 is not number
 
+			if arg2 ~= "" and arg3 ~= nil and arg3 ~= "" then
+				NS.deleteNote(RemnotesData, arg2, arg3);
+			else
+				print(cError.."Incorrect syntax. Use: "..cYellow..SLASH_REMNOTES_NOTE1.." del CHARNAME NUMBER");			
+			end
+		end
 	else
 		print(cError.."Do not understand "..cWhite..msg..cYellow.." Try "..SLASH_REMNOTES_NOTE1.." help");
 	end
